@@ -1,0 +1,4 @@
+gradio
+
+-e segment_anything
+-r lama_requirements.txt
