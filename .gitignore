@@ -1,0 +1,6 @@
+__pycache__/
+*venv/
+model_ckpts/
+
+test*/
+test*.*
