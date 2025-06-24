@@ -1,10 +1,11 @@
 import numpy as np, torch
+import yaml
 
 from diffusers import AutoPipelineForInpainting
 
-from .app_utils import resize_image, dilate_mask
+from app_utils import resize_image, dilate_mask
 from lama_inpaint import build_lama_model, inpaint_img_with_builded_lama
-from .tesseract import get_masked_ocr, get_bboxes
+from tesseract import get_masked_ocr, get_bboxes
 from segment_anything.segment_anything import (
     sam_model_registry,
     SamAutomaticMaskGenerator,
@@ -16,16 +17,12 @@ from typing import Literal
 
 
 
-_ckpt_paths = {
-    'lama': 'D:/inpaint-anything/pretrained_models/big-lama',
-    'sam': 'D:/inpaint-anything/pretrained_models/sam_vit_h_4b8939.pth',
-    'sd': 'D:/temp/model_ckpts/mixed_prec/dreambooth_10k'
-}
+_ckpt_paths = yaml.safe_load('./app/config.yml')
 _model = {
     'lama': None,
     'sam': None,
     'sd': None,
-    'lama_config': 'D:/inpaint-anything/lama/configs/prediction/default.yaml',
+    'lama_config': _ckpt_paths['lama_config'],
     'inpaint_type': None,
     'device': None,
 }
