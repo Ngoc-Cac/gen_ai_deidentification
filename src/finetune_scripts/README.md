@@ -58,3 +58,6 @@ If the model/optimizer is too big to fit onto the GPU, here are some optimizatio
 You can resume from a checkpoint saved during training by setting `--resume_from_checkpoint [path/to/checkpoint]`. This is useful if training stopped abruptly.
 
 You may also use this to continue training for extra steps. However, this will not work as expected for non-linear learning rate scheduler.
+
+## Loading fine-tuned model for inference
+To see how to used the new fine-tuned model, visit [`inference.ipynb`](./inference.ipynb).
