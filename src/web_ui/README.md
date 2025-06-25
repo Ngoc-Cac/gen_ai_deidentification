@@ -24,6 +24,7 @@ assets/
 └── models/
     ├── lama
     ├── sd_inpaint
+    ├── .gitignore
     ├── sam_vit_h_4b8939.pth
     └── sttn.pth
 ```
