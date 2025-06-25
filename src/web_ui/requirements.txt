@@ -1,4 +1,5 @@
 gradio
+diffusers
 
 -e segment_anything
--r lama_requirements.txt
+-r ./lama/lama_requirements.txt
