@@ -1,5 +1,6 @@
 gradio
 diffusers
+transformers
 
 -e segment_anything
 -r ./lama/lama_requirements.txt
