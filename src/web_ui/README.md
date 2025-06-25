@@ -6,7 +6,7 @@ This is a Web UI developed with gradio to demonstrate our pipeline of medical im
 
 ## Hosting the Web UI on yor local machine
 You can host the UI on your local machine. Python 3.12 is recommended, you may also create a virtual environment.
-1. Move to this directory and install PyTorch. Visit [PyTorch](https://pytorch.org/), choose the suitable configurations and copy the command to install torch along with CUDA toolkits.
+1. Move to this directory and install PyTorch. Visit [PyTorch](https://pytorch.org/get-started/locally/), choose the suitable configurations and copy the command to install torch along with CUDA toolkits.
 2. Install other dependencies with:
 ```bash
 pip install -r requirements.txt
