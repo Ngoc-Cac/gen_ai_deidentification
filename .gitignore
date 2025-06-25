@@ -4,3 +4,6 @@ model_ckpts/
 
 test*/
 test*.*
+
+# dir where gradio stores certificate when publishing url.
+.gradio
