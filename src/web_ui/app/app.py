@@ -152,12 +152,6 @@ def process_image_click(
             x, y, seg_all_res['all_mask'],
             clicked_points, source_image
         )
-    
-    # return (
-    #     overlay_img,
-    #     clicked_points,
-    #     mask_img
-    # )
 
 def process_seg_all(
     original_image,
@@ -214,7 +208,6 @@ def get_inpainted_img(
     inpaint_res = inpaint_image(
         image, mask,
         resolution, sd_inference_step,
-        # model['inpaint_type']
     )
     progress(1, 'Finished...')
     return inpaint_res
