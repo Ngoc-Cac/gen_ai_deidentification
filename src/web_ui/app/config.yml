@@ -1,4 +1,4 @@
-lama: assets/models/big-lama
+lama: ../../assets/models/big-lama
 lama_config: lama_default_config.yaml
-sam: assets/models/sam_vit_h_4b8939.pth
-sd: assets/models/sd_inpaint
+sam: ../../assets/models/sam_vit_h_4b8939.pth
+sd: ../../assets/models/sd_inpaint
