@@ -22,7 +22,6 @@ _model = {
     'lama': None,
     'sam': None,
     'sd': None,
-    'lama_config': _ckpt_paths['lama_config'],
     'inpaint_type': None,
     'device': None,
 }
@@ -34,7 +33,7 @@ def load_ckpt(
     device: Literal['cuda', 'cpu'] = 'cpu'
 ):
     if config_path is None:
-        config_path = _model['lama_config']
+        config_path = _ckpt_paths['lama_config']
     if ckpt_path is None:
         ckpt_path = _ckpt_paths[model_type]
 
@@ -42,7 +41,7 @@ def load_ckpt(
         _model['sd'] = None
         _model['inpaint_type'] = model_type
         _model['device'] = device
-        _model['lama_config'] = config_path
+        _ckpt_paths['lama_config'] = config_path
         _model['lama'] = build_lama_model(
             config_path, ckpt_path,
             device=device, weights_only=False
@@ -120,7 +119,7 @@ def inpaint_image(
     if model_type == 'lama':
         img_inpainted = inpaint_img_with_builded_lama(
             _model['lama'], image, mask,
-            _model['lama_config'], device=_model['device']
+            _ckpt_paths['lama_config'], device=_model['device']
         )
     elif model_type == 'sd':
         resized_img = resize_image(image, resolution) / 255
