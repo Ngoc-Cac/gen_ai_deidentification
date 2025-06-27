@@ -17,7 +17,7 @@ from typing import Literal
 
 
 
-_ckpt_paths = yaml.safe_load('./app/config.yml')
+_ckpt_paths = yaml.safe_load(open('./app/config.yml'))
 _model = {
     'lama': None,
     'sam': None,
