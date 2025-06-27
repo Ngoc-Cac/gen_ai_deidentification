@@ -4,9 +4,22 @@ This is a Web UI developed with gradio to demonstrate our pipeline of medical im
 - Segement anything: Images can be segmented with SaM to create mask for inpainting.
 - Inpainting: After obtaining a mask, you can inpaint the image with a pretrained LaMa or our fine-tuned Stable Diffusion v2 for inpainting.
 
-## Hosting the Web UI on yor local machine
-You can host the UI on your local machine. Python 3.12 is recommended, you may also create a virtual environment.
-1. Move to this directory and install PyTorch. Visit [PyTorch](https://pytorch.org/get-started/locally/), choose the suitable configurations and copy the command to install torch along with CUDA toolkits.
+To host the UI on your local machine, follow the below steps.
+
+## Prerequisites
+Python is necessary. Python 3.12 is recommended, but early minor releases of Python 3.13 might also work.
+
+You also need [Tesseract](https://github.com/tesseract-ocr/tesseract) (Tesseract 5 is recommended). Visit [Tesseract installation](https://tesseract-ocr.github.io/tessdoc/Installation.html) and navigate to your OS of choice to install the appropriate binary package. Once installed, check if Tesseract is in your system's PATH variable. If not, add it to PATH. You can also check this by executing the following command in your terminal:
+```bash
+tesseract --version
+```
+
+## Dependencies Installation and Quick Start
+You should create a fresh virtual environment before installing the requirements.
+1. Move to this directory and install PyTorch. Visit [PyTorch](https://pytorch.org/get-started/locally/), choose the suitable configurations for your system and run the generated command. For example, the command for installing PyTorch using pip on a system with CUDA 12.8 is:
+```
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+```
 2. Install other dependencies with:
 ```bash
 pip install -r requirements.txt
@@ -32,3 +45,4 @@ assets/
 ```
 python app.py
 ```
+If the app ran successfully, you can finally access and interact with the Web UI at `http://localhost:7860`.
