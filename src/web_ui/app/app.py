@@ -255,7 +255,6 @@ load_ckpt('sam', device=device)
 load_ckpt(model['inpaint_type'], device=device)
 
 
-button_size = (100, 50)
 with gr.Blocks() as demo:
     clicked_points = gr.State([])
     origin_image = gr.State(None)
