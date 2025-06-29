@@ -6,12 +6,12 @@ import cv2, gradio as gr, numpy as np, torch
 
 from app_utils import HWC3, resize_image, resize_points
 from model_backend import (
-    clean_phi,
     get_all_mask,
     get_click_mask,
     get_sam_feat,
     inpaint_image,
     load_ckpt,
+    segment_text,
 )
 
 
@@ -214,10 +214,10 @@ def get_inpainted_img(
 
 def process_clean_phi(
     image, detailed_bbox,
-    resegement
+    resegement, segment_only
 ):
-    inpainted_img, mask = clean_phi(image, detailed_bbox, resegement)
-    
+    mask = segment_text(image, detailed_bbox, resegement)
+   
     mask_img = (
         HWC3(mask) * np.array([0 / 255, 255 / 255, 0 / 255])
     ).astype(np.uint8)
@@ -225,6 +225,18 @@ def process_clean_phi(
         image, 1,
         mask_img, 0.35, 0
     )
+   
+    if segment_only:
+        return mask, overlay_img
+
+
+    if model['inpaint_type'] == 'sd':
+        load_ckpt('lama')
+        inpainted_img = inpaint_image(image, mask)
+        load_ckpt('sd')
+    else:
+        inpainted_img = inpaint_image(image, mask)
+
     return (
         inpainted_img,
         mask,
@@ -262,10 +274,10 @@ with gr.Blocks() as demo:
             with gr.Tab('Segmentation Panel'):
                 with gr.Row(equal_height=True, variant='panel'):
                     with gr.Column(min_width=50):
+                        segment_phi = gr.Button(
+                            'Segment PHI Text', variant='primary')
                         remove_phi = gr.Button(
                             "Remove PHI Text with LaMa", variant='primary')
-                        save_clean_phi = gr.Button(
-                            'Save Results', variant='secondary')
                     clean_phi_options = gr.CheckboxGroup(
                         [
                             ('Give detailed bounding box', 'detailed'),
@@ -383,19 +395,15 @@ with gr.Blocks() as demo:
 
     remove_phi.click(
         process_clean_phi,
-        [origin_image, txt_detailed, txt_resegement],
+        [origin_image, txt_detailed, txt_resegement, False],
         [img_rm_with_mask, click_mask, source_image_click],
         show_progress=True
     )
-    save_clean_phi.click(
-        image_upload,
-        [img_rm_with_mask, image_resolution],
-        outputs=[clicked_points, origin_image, seg_all_res,
-                 features, orig_h, orig_w, input_h, input_w],
-        show_progress=True, queue=True
-    ).then(
-        lambda origin_image: origin_image,
-        [origin_image], [source_image_click]
+    segment_phi.click(
+        process_clean_phi,
+        [origin_image, txt_detailed, txt_resegement, True],
+        [click_mask, source_image_click],
+        show_progress=True
     )
     inpaint_button.click(
         lambda: gr.Tabs(selected='removed'),
@@ -407,6 +415,7 @@ with gr.Blocks() as demo:
     )
 
 
+    
     clear_button_image.click(
         lambda origin_image, *reset_none: [[], origin_image] + [None] * len(reset_none),
         [origin_image, click_mask, img_rm_with_mask, seg_all_res],
