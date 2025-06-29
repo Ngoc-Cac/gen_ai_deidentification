@@ -234,7 +234,7 @@ def process_clean_phi(
 
 # build models
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model = {'inpaint_type': 'lama'}
+model = {'inpaint_type': 'sd'}
 
 # build the sam model
 load_ckpt('sam', device=device)
@@ -254,8 +254,8 @@ with gr.Blocks() as demo:
     orig_w = gr.State(None)
     input_h = gr.State(None)
     input_w = gr.State(None)
-    txt_resegement = gr.State(False)
-    txt_detailed = gr.State(False)
+    txt_resegement = gr.State(True)
+    txt_detailed = gr.State(True)
 
     with gr.Row():
         with gr.Column(variant='panel'):
@@ -270,7 +270,8 @@ with gr.Blocks() as demo:
                         [
                             ('Give detailed bounding box', 'detailed'),
                             ('Re-segment with SaM', 'resegment')
-                        ], show_label=False, container=False,
+                        ], value=['detailed', 'resegment'],
+                        show_label=False, container=False,
                         min_width=50
                     )
                 segment_everything = gr.Button("Segment Everything", variant='primary')
