@@ -132,7 +132,7 @@ def inpaint_image(
 
     return img_inpainted
 
-def clean_phi(
+def segment_text(
     image,
     detailed_bbox: bool = False,
     resegment: bool = False,
@@ -156,11 +156,4 @@ def clean_phi(
     else:
         mask = get_masked_ocr(image, detailed_bbox)
 
-    if _model['inpaint_type'] == 'sd':
-        load_ckpt('lama')
-        inpainted_image = inpaint_image(image, mask)
-        load_ckpt('sd')
-    else:
-        inpainted_image = inpaint_image(image, mask)
-
-    return inpainted_image, mask
+    return mask
