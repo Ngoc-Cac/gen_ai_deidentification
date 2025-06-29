@@ -287,7 +287,6 @@ with gr.Blocks() as demo:
                         min_width=50
                     )
                 segment_everything = gr.Button("Segment Everything", variant='primary')
-                clear_button_image = gr.Button(value="Reset", variant="secondary")
                 undo_select = gr.Button("Undo Mask Selection", visible=False)
             with gr.Tab('Inpaint Panel'):
                 inpaint_button = gr.Button("Inpaint Image", variant="primary")
@@ -303,6 +302,9 @@ with gr.Blocks() as demo:
                         minimum=10, maximum=100,
                         value=50, step=10
                     )
+
+            save_results = gr.Button(value="Save results", variant='secondary')
+            clear_button_image = gr.Button(value="Reset", variant="secondary")
         with gr.Column(variant='panel', scale=3):
             with gr.Tabs() as image_tab:
                 with gr.TabItem('Input Image', id='input'):
@@ -415,7 +417,16 @@ with gr.Blocks() as demo:
     )
 
 
-    
+    save_results.click(
+        image_upload,
+        [img_rm_with_mask, image_resolution],
+        outputs=[clicked_points, origin_image, seg_all_res,
+                 features, orig_h, orig_w, input_h, input_w],
+        show_progress=True, queue=True
+    ).then(
+        lambda origin_image: origin_image,
+        [origin_image], [source_image_click]
+    )
     clear_button_image.click(
         lambda origin_image, *reset_none: [[], origin_image] + [None] * len(reset_none),
         [origin_image, click_mask, img_rm_with_mask, seg_all_res],
