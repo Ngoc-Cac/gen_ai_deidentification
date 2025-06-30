@@ -291,7 +291,10 @@ with gr.Blocks() as demo:
                 inpaint_button = gr.Button("Inpaint Image", variant="primary")
                 with gr.Row(): gr.Markdown('### Inpainting Model')
                 model_selection = gr.Dropdown(
-                    [('LaMa', 'lama'), ('Stable Diffusion v2', 'sd')],
+                    [
+                        ('LaMa', 'lama'),
+                        ('Stable Diffusion v2 for Forearms', 'sd')
+                    ],
                     value=model['inpaint_type'],
                     show_label=False,
                     interactive=True
