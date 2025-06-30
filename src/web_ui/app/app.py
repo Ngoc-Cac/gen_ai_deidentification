@@ -399,13 +399,13 @@ with gr.Blocks() as demo:
 
     remove_phi.click(
         process_clean_phi,
-        [origin_image, txt_detailed, txt_resegement, False],
+        [origin_image, txt_detailed, txt_resegement, gr.State(False)],
         [img_rm_with_mask, click_mask, source_image_click],
         show_progress=True
     )
     segment_phi.click(
         process_clean_phi,
-        [origin_image, txt_detailed, txt_resegement, True],
+        [origin_image, txt_detailed, txt_resegement, gr.State(True)],
         [click_mask, source_image_click],
         show_progress=True
     )
