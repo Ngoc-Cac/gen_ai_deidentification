@@ -26,12 +26,18 @@ def load_model(model_val, progress=gr.Progress()):
 
 def get_selected_mask(all_mask, clicked_points):
     chosen_mask = [
-        min([mask for mask in all_mask if mask['segmentation'][y, x]],
-            key=lambda ann: ann['area'])['segmentation']
+        min(
+            [mask for mask in all_mask if mask['segmentation'][y, x]],
+            key=lambda ann: ann['area'],
+            default=None
+        )['segmentation']
         for x, y in clicked_points
     ]
 
-    mask_img = np.logical_or.reduce(np.stack(chosen_mask, axis=0), axis=0)
+    mask_img = np.logical_or.reduce(
+        np.stack([mask for mask in chosen_mask if mask is not None], axis=0),
+        axis=0
+    )
     return mask_img.astype(np.uint8) * 255
 
 
