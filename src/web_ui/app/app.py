@@ -359,11 +359,13 @@ with gr.Blocks() as demo:
         load_model,
         [model_selection],
         [model_selection, sd_config],
+        api_name='set-inpaint-model'
     )
     clean_phi_options.change(
         lambda options: ('detailed' in options, 'resegment' in options),
         [clean_phi_options],
         [txt_detailed, txt_resegement],
+        api_name=False
     )
 
 
@@ -372,7 +374,8 @@ with gr.Blocks() as demo:
         inputs=[source_image_click, image_resolution],
         outputs=[clicked_points, origin_image, seg_all_res,
                  features, orig_h, orig_w, input_h, input_w],
-        show_progress=True, queue=True
+        show_progress=True, queue=True,
+        api_name='upload-image'
     )
     source_image_click.select(
         process_image_click,
@@ -381,24 +384,27 @@ with gr.Blocks() as demo:
                 dilate_kernel_size, features,
                 orig_h, orig_w, input_h, input_w],
         outputs=[source_image_click, clicked_points, click_mask],
-        show_progress=True,
-        queue=True,
+        show_progress=True, queue=True,
+        api_name='point-segment'
     )
 
     segment_everything.click(
         process_seg_all,
         [origin_image],
-        [source_image_click, seg_all_res, clicked_points]
+        [source_image_click, seg_all_res, clicked_points],
+        api_name='segment-everything'
     )
     seg_all_res.change(
         lambda x: gr.Button("Undo Mask Selection", visible=(not x is None)),
-        [seg_all_res], [undo_select]
+        [seg_all_res], [undo_select],
+        api_name=False
     )
     undo_select.click(
         undo_mask_selection,
         [seg_all_res, clicked_points],
         [source_image_click, clicked_points, click_mask],
-        show_progress=True
+        show_progress=True,
+        api_name=False
     )
 
 
@@ -406,21 +412,25 @@ with gr.Blocks() as demo:
         process_clean_phi,
         [origin_image, txt_detailed, txt_resegement, gr.State(False)],
         [img_rm_with_mask, click_mask, source_image_click],
-        show_progress=True
+        show_progress=True,
+        api_name=False
     )
     segment_phi.click(
         process_clean_phi,
         [origin_image, txt_detailed, txt_resegement, gr.State(True)],
         [click_mask, source_image_click],
-        show_progress=True
+        show_progress=True,
+        api_name='segment-text'
     )
     inpaint_button.click(
         lambda: gr.Tabs(selected='removed'),
-        outputs=[image_tab]
+        outputs=[image_tab],
+        api_name=False
     ).then(
         get_inpainted_img,
         [origin_image, click_mask, image_resolution, sd_inference_step],
-        [img_rm_with_mask]
+        [img_rm_with_mask],
+        api_name='inpaint',
     )
 
 
@@ -437,14 +447,12 @@ with gr.Blocks() as demo:
     clear_button_image.click(
         lambda origin_image, *reset_none: [[], origin_image] + [None] * len(reset_none),
         [origin_image, click_mask, img_rm_with_mask, seg_all_res],
-        [clicked_points, source_image_click, click_mask,
-         img_rm_with_mask, seg_all_res]
+        [clicked_points, source_image_click, click_mask, img_rm_with_mask, seg_all_res]
     )
 
 
 if __name__ == "__main__":
     demo.queue(api_open=False).launch(
         server_name='0.0.0.0',
-        share=True,
-        debug=True,
+        share=False, debug=True,
     )
