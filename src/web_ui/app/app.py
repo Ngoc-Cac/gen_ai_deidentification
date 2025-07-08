@@ -4,6 +4,8 @@ os.chdir("../")
 
 import cv2, gradio as gr, numpy as np, torch
 
+from PIL import Image
+
 from app_utils import HWC3, resize_image, resize_points
 from model_backend import (
     get_all_mask,
@@ -256,6 +258,10 @@ model = {'inpaint_type': 'sd'}
 # build the lama model
 load_ckpt(model['inpaint_type'], device=device)
 
+default_img = np.array(
+    Image.open('D:/test/gen_ai_deidentification/assets/pngs/web_demo.png')
+)
+
 
 with gr.Blocks() as demo:
     clicked_points = gr.State([])
@@ -313,7 +319,8 @@ with gr.Blocks() as demo:
             with gr.Tabs() as image_tab:
                 with gr.TabItem('Input Image', id='input'):
                     source_image_click = gr.Image(
-                        type="numpy", sources=['upload', 'clipboard'],
+                        value=default_img,
+                        type="numpy", sources=['upload'],
                         interactive=True, show_label=False,
                         height=550,
                     )
