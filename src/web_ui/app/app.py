@@ -259,7 +259,7 @@ model = {'inpaint_type': 'sd'}
 load_ckpt(model['inpaint_type'], device=device)
 
 default_img = np.array(
-    Image.open('D:/test/gen_ai_deidentification/assets/pngs/web_demo.png')
+    Image.open('../../assets/data/demo_images/web_demo.png')
 )
 
 
@@ -451,6 +451,14 @@ with gr.Blocks() as demo:
         lambda origin_image, *reset_none: [[], origin_image] + [None] * len(reset_none),
         [origin_image, click_mask, img_rm_with_mask, seg_all_res],
         [clicked_points, source_image_click, click_mask, img_rm_with_mask, seg_all_res]
+    )
+
+    demo.load(
+        image_upload,
+        inputs=[gr.State(default_img), image_resolution],
+        outputs=[clicked_points, source_image_click, origin_image,
+                 seg_all_res, features, orig_h, orig_w, input_h, input_w],
+        api_name=False
     )
 
 
