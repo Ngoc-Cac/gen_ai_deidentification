@@ -18,47 +18,45 @@ from typing import Literal
 
 
 _ckpt_paths = yaml.safe_load(open('./app/config.yml'))
+_sam_reg = (
+    sam_model_registry['vit_h']
+    (checkpoint=_ckpt_paths['sam'])
+    .to(device='cuda' if torch.cuda.is_available() else 'cpu')
+)
 _model = {
-    'lama': None,
-    'sam': None,
-    'sd': None,
+    'lama': build_lama_model(
+        _ckpt_paths['lama_config'], _ckpt_paths['lama'],
+        device='cpu', weights_only=False
+    ),
+    'sam': {
+        'predictor': SamPredictor(_sam_reg),
+        'generator': SamAutomaticMaskGenerator(_sam_reg)
+    },
+    'sd': AutoPipelineForInpainting.from_pretrained(
+        _ckpt_paths['sd'], safety_checker=None,
+        requires_safety_checker=False
+    ),
     'inpaint_type': None,
     'device': None,
 }
 
+
 def load_ckpt(
     model_type: Literal['lama', 'sd', 'sam'],
-    ckpt_path: str | None = None,
-    config_path: str | None = None,
     device: Literal['cuda', 'cpu'] = 'cpu'
 ):
-    if config_path is None:
-        config_path = _ckpt_paths['lama_config']
-    if ckpt_path is None:
-        ckpt_path = _ckpt_paths[model_type]
-
     if model_type == 'lama':
-        _model['sd'] = None
-        _model['inpaint_type'] = model_type
-        _model['device'] = device
-        _ckpt_paths['lama_config'] = config_path
-        _model['lama'] = build_lama_model(
-            config_path, ckpt_path,
-            device=device, weights_only=False
-        )
+        _model['sd'].to('cpu')
+        _model['lama'].to(device)
     elif model_type == 'sd':
-        _model['lama'] = None
-        _model['inpaint_type'] = model_type
-        _model['device'] = device
-        _model['sd'] = AutoPipelineForInpainting.from_pretrained(
-            ckpt_path, safety_checker=None, requires_safety_checker=False
-        ).to(device)
-    elif model_type == 'sam':
-        sam_reg = sam_model_registry['vit_h'](checkpoint=ckpt_path).to(device=device)
-        _model['sam'] = {
-            'predictor': SamPredictor(sam_reg),
-            'generator': SamAutomaticMaskGenerator(sam_reg)
-        }
+        _model['lama'].to('cpu')
+        _model['sd'].to(device)
+    else:
+        raise ValueError(f"No model_type '{model_type}'' found...")
+
+    _model['inpaint_type'] = model_type
+    _model['device'] = device
+    torch.cuda.empty_cache()
 
 
 def get_sam_feat(img):
@@ -113,7 +111,6 @@ def inpaint_image(
     image, mask,
     resolution: int = 512,
     sd_inference_step: int = 50,
-    # model_type: Literal['lama', 'sd'] = _model['inpaint_type']
 ):
     model_type = _model['inpaint_type']
     if model_type == 'lama':
