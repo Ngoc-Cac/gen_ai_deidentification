@@ -253,9 +253,6 @@ def process_clean_phi(
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = {'inpaint_type': 'sd'}
 
-# build the sam model
-load_ckpt('sam', device=device)
-
 # build the lama model
 load_ckpt(model['inpaint_type'], device=device)
 
