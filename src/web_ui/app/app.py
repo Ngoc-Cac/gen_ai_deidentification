@@ -376,9 +376,8 @@ with gr.Blocks() as demo:
     source_image_click.upload(
         image_upload,
         inputs=[source_image_click, image_resolution],
-        outputs=[clicked_points, origin_image, seg_all_res,
-                 features, orig_h, orig_w, input_h, input_w],
-        show_progress=True, queue=True,
+        outputs=[clicked_points, source_image_click, origin_image,
+                 seg_all_res, features, orig_h, orig_w, input_h, input_w],
         api_name='upload-image'
     )
     source_image_click.select(
