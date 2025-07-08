@@ -12,9 +12,7 @@ from segment_anything.segment_anything import (
     SamPredictor,
 )
 
-
 from typing import Literal
-
 
 
 _ckpt_paths = yaml.safe_load(open('./app/config.yml'))
@@ -42,7 +40,7 @@ _model = {
 
 
 def load_ckpt(
-    model_type: Literal['lama', 'sd', 'sam'],
+    model_type: Literal['lama', 'sd'],
     device: Literal['cuda', 'cpu'] = 'cpu'
 ):
     if model_type == 'lama':
@@ -52,7 +50,7 @@ def load_ckpt(
         _model['lama'].to('cpu')
         _model['sd'].to(device)
     else:
-        raise ValueError(f"No model_type '{model_type}'' found...")
+        raise ValueError(f"No model_type '{model_type}' found...")
 
     _model['inpaint_type'] = model_type
     _model['device'] = device
