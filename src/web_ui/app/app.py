@@ -46,8 +46,10 @@ def segment_by_click(
     x, y,
     original_image, point_prompt, clicked_points,
     image_resolution, dilate_kernel_size,
-    features, orig_h, orig_w, input_h, input_w
+    features, orig_h, orig_w, input_h, input_w,
+    progress=gr.Progress()
 ):
+    progress(0, 'Processing point prompts...')
     label = point_prompt
     lab = 1 if label == "Foreground Point" else 0
     clicked_points.append((x, y, lab))
@@ -55,18 +57,19 @@ def segment_by_click(
     input_image = np.array(original_image, dtype=np.uint8)
     H, W, C = input_image.shape
     input_image = HWC3(input_image)
-    # img = resize_image(input_image, image_resolution)
 
     # Update the clicked_points
     resized_points = resize_points(
         clicked_points, input_image.shape, image_resolution
     )
+    progress(.5, 'Segmenting image...')
     mask_click_np = get_click_mask(
         resized_points, features,
         orig_h, orig_w, input_h, input_w,
         dilate_kernel_size,
     )
 
+    progress(.75, 'Segmenting finished! Preparing results...')
     # Convert mask_click_np to HWC format
     mask_click_np = np.transpose(mask_click_np, (1, 2, 0)) * 255.0
 
@@ -96,6 +99,7 @@ def segment_by_click(
         opacity_mask,
         0,
     )
+    progress(1, "Task finished!")
 
     return (
         overlay_image,
