@@ -133,13 +133,13 @@ def segment_text(
     resegment: bool = False,
 ):
     if resegment:
+        bboxes = get_bboxes(image, detailed_bbox)
+        if bboxes.shape[0] == 0: return None
+
         sam_alias = _model['sam']['predictor']
         sam_alias.set_image(image)
 
-        input_boxes = torch.tensor(
-            get_bboxes(image, detailed_bbox),
-            device=sam_alias.device
-        )
+        input_boxes = torch.tensor(bboxes, device=sam_alias.device)
         transformed_boxes = sam_alias.transform.apply_boxes_torch(input_boxes, image.shape[:2])
         masks, _, mask_input = sam_alias.predict_torch(
             point_coords=None,
