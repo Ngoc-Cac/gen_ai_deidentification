@@ -242,7 +242,7 @@ def process_clean_phi(
         'Preparing segmentation results'
     )
 
-    if mask.shape[0] == 0:
+    if mask is None:
         gr.Info(
             "No text found in the current image",
             title='No text found!', duration=5
