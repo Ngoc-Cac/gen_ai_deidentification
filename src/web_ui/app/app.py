@@ -221,22 +221,33 @@ def get_inpainted_img(
 
 def process_clean_phi(
     image, detailed_bbox,
-    resegement, segment_only
+    resegement, segment_only,
+    progress=gr.Progress()
 ):
+    progress(0, 'Segmenting texts...')
     mask = segment_text(image, detailed_bbox, resegement)
    
-    mask_img = (
-        HWC3(mask) * np.array([0 / 255, 255 / 255, 0 / 255])
-    ).astype(np.uint8)
-    overlay_img = cv2.addWeighted(
-        image, 1,
-        mask_img, 0.35, 0
+    progress(
+        1 if segment_only else .5,
+        'Preparing segmentation results'
     )
+
+    if mask.shape[0] == 0:
+        gr.Info("No text found in image", duration=5)
+        return None, image
+    else:
+        mask_img = (
+            HWC3(mask) * np.array([0 / 255, 255 / 255, 0 / 255])
+        ).astype(np.uint8)
+        overlay_img = cv2.addWeighted(
+            image, 1,
+            mask_img, 0.35, 0
+        )
    
     if segment_only:
         return mask, overlay_img
 
-
+    progress(.75, 'Removing texts with LaMa...')
     if model['inpaint_type'] == 'sd':
         load_ckpt('lama')
         inpainted_img = inpaint_image(image, mask)
@@ -244,6 +255,7 @@ def process_clean_phi(
     else:
         inpainted_img = inpaint_image(image, mask)
 
+    progress(1, 'Finished removal!')
     return (
         inpainted_img,
         mask,
