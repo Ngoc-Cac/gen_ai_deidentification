@@ -468,6 +468,10 @@ with gr.Blocks() as demo:
         outputs=[clicked_points, source_image_click, origin_image,
                  seg_all_res, features, orig_h, orig_w, input_h, input_w],
         show_progress=True, queue=True
+    ).then(
+        lambda: gr.Tabs(selected='input'),
+        outputs=[image_tab],
+        api_name=False
     )
     clear_button_image.click(
         lambda origin_image, *reset_none: [[], origin_image] + [None] * len(reset_none),
