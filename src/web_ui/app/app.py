@@ -209,10 +209,10 @@ def get_inpainted_img(
 ):
     if mask is None:
         gr.Info(
-            'There is no mask created for the current image.'
+            'No masks has been created for the current image.'
             ' Please create one in the segment panel before'
             ' performing inpainting.',
-            duration=10
+            title='No masks created!', duration=10
         )
         return None
     if len(mask.shape)==3: mask = mask[:,:,0]
@@ -239,7 +239,10 @@ def process_clean_phi(
     )
 
     if mask.shape[0] == 0:
-        gr.Info("No text found in image", duration=5)
+        gr.Info(
+            "No text found in the current image",
+            title='No text found!', duration=5
+        )
         return None, image
     else:
         mask_img = (
