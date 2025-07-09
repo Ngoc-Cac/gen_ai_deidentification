@@ -188,21 +188,19 @@ def process_seg_all(
     return overlay_img, {'overlay': overlay_img, 'all_mask': masks}, []
 
 def image_upload(image, image_resolution, progress=gr.Progress()):
-    if image is not None:
-        progress(0, 'Image uploaded...')
-        np_image = np.array(image, dtype=np.uint8)
+    progress(0, 'Image uploaded...')
+    np_image = np.array(image, dtype=np.uint8)
 
-        progress(1 / 3, 'Processing image...')
-        np_image = HWC3(np_image)
-        np_image = resize_image(np_image, image_resolution)
+    progress(1 / 3, 'Processing image...')
+    np_image = HWC3(np_image)
+    np_image = resize_image(np_image, image_resolution)
 
-        progress(2 / 3, 'Getting SaM features...')
-        features, orig_h, orig_w, input_h, input_w = get_sam_feat(np_image)
+    progress(2 / 3, 'Getting SaM features...')
+    features, orig_h, orig_w, input_h, input_w = get_sam_feat(np_image)
 
-        progress(1, 'Finished...')
-        return [], image, None, features, orig_h, orig_w, input_h, input_w
-    else:
-        return [], None, None, None, None, None, None, None
+    progress(1, 'Finished...')
+    # clicked_points, src_image, origin, seg_all, ...
+    return [], image, image, None, features, orig_h, orig_w, input_h, input_w
 
 def get_inpainted_img(
     image, mask, resolution,
