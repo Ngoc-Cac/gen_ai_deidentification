@@ -262,9 +262,9 @@ def process_clean_phi(
 
     progress(.75, 'Removing texts with LaMa...')
     if model['inpaint_type'] == 'sd':
-        load_ckpt('lama')
+        load_ckpt('lama', device)
         inpainted_img = inpaint_image(image, mask)
-        load_ckpt('sd')
+        load_ckpt('sd', device)
     else:
         inpainted_img = inpaint_image(image, mask)
 
