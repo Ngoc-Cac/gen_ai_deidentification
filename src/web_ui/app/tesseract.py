@@ -45,6 +45,9 @@ def get_masked_ocr(
     img,
     detailed_bbox: bool = True
 ):
+    bboxes = get_bboxes(img, detailed_bbox)
+    if bboxes.shape[0] == 0: return None
+    
     mask = Image.new('L', (img.shape[1], img.shape[0]))
     mask_drawer = ImageDraw.Draw(mask)
 
