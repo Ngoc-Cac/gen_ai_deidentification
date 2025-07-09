@@ -207,6 +207,14 @@ def get_inpainted_img(
     sd_inference_step,
     progress=gr.Progress(True)
 ):
+    if mask is None:
+        gr.Info(
+            'There is no mask created for the current image.'
+            ' Please create one in the segment panel before'
+            ' performing inpainting.',
+            duration=10
+        )
+        return None
     if len(mask.shape)==3: mask = mask[:,:,0]
 
     progress(0, 'Inpainting...')
