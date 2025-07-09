@@ -50,7 +50,7 @@ def load_ckpt(
         _model['lama'].to('cpu')
         _model['sd'].to(device)
     else:
-        raise ValueError(f"No model_type '{model_type}' found...")
+        raise ValueError(f"No model_type '{model_type}'' found...")
 
     _model['inpaint_type'] = model_type
     _model['device'] = device
