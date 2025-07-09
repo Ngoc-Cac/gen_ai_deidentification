@@ -221,7 +221,7 @@ def get_inpainted_img(
         return None
     if len(mask.shape)==3: mask = mask[:,:,0]
 
-    progress(0, 'Inpainting...')
+    progress(.2, 'Inpainting...')
     inpaint_res = inpaint_image(
         image, mask,
         resolution, sd_inference_step,
@@ -234,13 +234,8 @@ def process_clean_phi(
     resegement, segment_only,
     progress=gr.Progress()
 ):
-    progress(0, 'Segmenting texts...')
+    progress(.5, 'Segmenting texts...')
     mask = segment_text(image, detailed_bbox, resegement)
-   
-    progress(
-        1 if segment_only else .5,
-        'Preparing segmentation results'
-    )
 
     if mask is None:
         gr.Info(
