@@ -242,7 +242,10 @@ def process_clean_phi(
             "No text found in the current image",
             title='No text found!', duration=5
         )
-        return None, image
+        return (
+            (None, image) if segment_only else
+            (None, None, image)
+        )
     else:
         mask_img = (
             HWC3(mask) * np.array([0 / 255, 255 / 255, 0 / 255])
