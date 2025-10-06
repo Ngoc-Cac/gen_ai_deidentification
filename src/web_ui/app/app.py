@@ -281,9 +281,10 @@ model = {'inpaint_type': 'sd'}
 # build the lama model
 load_ckpt(model['inpaint_type'], device=device)
 
-default_img = np.array(
-    Image.open('../../assets/data/demo_images/web_demo.png')
-)
+default_imgs = [
+    np.array(Image.open('../../assets/data/demo_images/web_demo1.png')),
+    np.array(Image.open('../../assets/data/demo_images/web_demo2.jpg')),
+]
 
 
 with gr.Blocks() as demo:
@@ -338,11 +339,21 @@ with gr.Blocks() as demo:
 
             save_results = gr.Button(value="Save results", variant='secondary')
             clear_button_image = gr.Button(value="Reset", variant="secondary")
+        with gr.Column(variant='panel'):
+            gr.Markdown("## Presets")
+            load_preset_1 = gr.Button(
+                "Load Preset Image 1",
+                variant='primary'
+            )
+            load_preset_2 = gr.Button(
+                "Load Preset Image 2",
+                variant='primary'
+            )
         with gr.Column(variant='panel', scale=3):
             with gr.Tabs() as image_tab:
                 with gr.TabItem('Input Image', id='input'):
                     source_image_click = gr.Image(
-                        value=default_img,
+                        value=default_imgs[0],
                         type="numpy", sources=['upload'],
                         interactive=True, show_label=False,
                         height=550,
@@ -457,6 +468,21 @@ with gr.Blocks() as demo:
         [origin_image, click_mask, image_resolution, sd_inference_step],
         [img_rm_with_mask],
         api_name='inpaint',
+    )
+
+    load_preset_1.click(
+        image_upload,
+        inputs=[gr.State(default_imgs[0]), image_resolution],
+        outputs=[clicked_points, source_image_click, origin_image,
+                 seg_all_res, features, orig_h, orig_w, input_h, input_w],
+        api_name=False
+    )
+    load_preset_2.click(
+        image_upload,
+        inputs=[gr.State(default_imgs[1]), image_resolution],
+        outputs=[clicked_points, source_image_click, origin_image,
+                 seg_all_res, features, orig_h, orig_w, input_h, input_w],
+        api_name=False
     )
 
 
